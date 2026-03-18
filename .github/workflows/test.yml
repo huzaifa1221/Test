@@ -1,0 +1,51 @@
+# This is a basic workflow to help you get started with Actions
+
+name: CI
+
+on:
+  push:
+    branches: [ "main" ]
+
+  workflow_dispatch:
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Run a one-line script
+        run: echo Hello, world!
+
+  build2:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Run a one-line script
+        run: docker ps
+
+  detect-failed-job:
+    runs-on: ubuntu-latest
+    if: always() &&  contains(needs.*.result, 'failure')
+    needs:
+      - build
+      - build2
+
+    steps:
+      - name: Detect failed job
+        id: detect
+        run: |
+          FAILED_JOB=$(echo '${{ toJson(needs) }}' | jq -r '
+            to_entries[]
+            | select(.value.result=="failure")
+            | .key
+          ' | head -n 1)
+  
+          echo "Failed job: $FAILED_JOB"
+          echo "failed_job=$FAILED_JOB" >> $GITHUB_OUTPUT
+
+      - name: print failed job
+        run: echo ${{ steps.detect.outputs.failed_job }}
+      
