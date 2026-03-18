@@ -24,7 +24,7 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Run a one-line script
-        run: docker ps
+        run: huzaifa aruba
 
   detect-failed-job:
     runs-on: ubuntu-latest
