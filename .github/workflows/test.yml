@@ -13,8 +13,6 @@ jobs:
 
   detect-failed-job:
     runs-on: ubuntu-latest
-    if: always() &&  contains(needs.*.result, 'failure')
-
     steps:
       - name: print failed job
         run: echo "this is first job"
